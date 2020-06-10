@@ -14,13 +14,13 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.5.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   firebase_core: ^0.4.5
-  mlkit: ^0.15.1
+  firebase_ml_vision: ^0.9.4
   image_picker: ^0.6.7
   path_provider: ^1.6.10
 

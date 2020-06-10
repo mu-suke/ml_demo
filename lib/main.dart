@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Firebase ML kitで遊んでみた'),
     );
   }
 }
@@ -29,6 +31,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File _image;
+  bool _isChecked = false;
+  bool _isFaceRecognition = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,25 +41,49 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
       ),
       body: Center(
-        child: _image == null
-            ? Text("画像を撮影してください")
-            : Image.file(_image),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _image == null
+                ? Text("画像を撮影してください")
+                : Image.file(_image),
+            Visibility(
+              visible: _image != null && !_isChecked,
+              child: startVerificationButton(),
+            ),
+            Visibility(
+              visible: _isChecked,
+              child: _isFaceRecognition
+                  ? Text("顔です")
+                  : Text("顔じゃないです"),
+            )
+          ]
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _onPickImageSelected();
         },
         child: Icon(
-          Icons.camera_alt,
+          Icons.add_a_photo,
           color: Colors.white,
         ),
       ),
     );
   }
-
+  Widget startVerificationButton() {
+    return RaisedButton(
+      child: Text("顔認証", style: TextStyle(color: Colors.white),),
+      color: Colors.blue,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      onPressed: () {
+        _startVerification();
+      },
+    );
+  }
   void _onPickImageSelected() async {
-    var imageSource = ImageSource.camera;
-
     try {
       final file = await ImagePicker().getImage(source: ImageSource.camera);
       setState(() {
@@ -66,5 +94,41 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     } catch (e) {
     }
+  }
+  void _startVerification() async {
+    final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(_image);
+    final FaceDetector faceDetector = FirebaseVision.instance.faceDetector();
+    final List<Face> faces = await faceDetector.processImage(visionImage);
+    for (Face face in faces) {
+      print('==============================face::${face.boundingBox}');
+      final Rect boundingBox = face.boundingBox;
+
+      final double rotY = face.headEulerAngleY; // Head is rotated to the right rotY degrees
+      final double rotZ = face.headEulerAngleZ; // Head is tilted sideways rotZ degrees
+
+      // If landmark detection was enabled with FaceDetectorOptions (mouth, ears,
+      // eyes, cheeks, and nose available):
+      final FaceLandmark leftEar = face.getLandmark(FaceLandmarkType.leftEar);
+      if (leftEar != null) {
+        final Offset leftEarPos = leftEar.position;
+      }
+
+      // If classification was enabled with FaceDetectorOptions:
+      if (face.smilingProbability != null) {
+        final double smileProb = face.smilingProbability;
+      }
+
+      // If face tracking was enabled with FaceDetectorOptions:
+      if (face.trackingId != null) {
+        final int id = face.trackingId;
+      }
+      setState(() {
+        _isChecked = !_isChecked;
+        _isFaceRecognition = leftEar == null && face.smilingProbability == null && face.trackingId == null
+            ? false
+            : true;
+      });
+    }
+    faceDetector.close();
   }
 }
