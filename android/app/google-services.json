@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "150831162478",
+    "firebase_url": "https://flutter-ml-demo-40e02.firebaseio.com",
+    "project_id": "flutter-ml-demo-40e02",
+    "storage_bucket": "flutter-ml-demo-40e02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150831162478:android:13cca0e78136c5e49b327f",
+        "android_client_info": {
+          "package_name": "com.example.mldemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150831162478-ban9h4l09j48sdddm2ej48epshcci94n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdFRrh5Fx2BhgwEuRwbIgFtDM_kz2zItk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150831162478-ban9h4l09j48sdddm2ej48epshcci94n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
