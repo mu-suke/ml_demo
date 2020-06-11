@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   File _image;
   bool _isChecked = false;
   bool _isFaceRecognition = false;
+  int _numOfFaces;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,8 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Visibility(
               visible: _isChecked,
               child: _isFaceRecognition
-                  ? Text("顔です")
-                  : Text("顔じゃないです"),
+                  ? Text("$_numOfFaces人の顔が認識されました")
+                  : Text("顔が認識できませんでした"),
             )
           ]
         ),
@@ -99,36 +100,39 @@ class _MyHomePageState extends State<MyHomePage> {
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(_image);
     final FaceDetector faceDetector = FirebaseVision.instance.faceDetector();
     final List<Face> faces = await faceDetector.processImage(visionImage);
-    for (Face face in faces) {
-      print('==============================face::${face.boundingBox}');
-      final Rect boundingBox = face.boundingBox;
-
-      final double rotY = face.headEulerAngleY; // Head is rotated to the right rotY degrees
-      final double rotZ = face.headEulerAngleZ; // Head is tilted sideways rotZ degrees
-
-      // If landmark detection was enabled with FaceDetectorOptions (mouth, ears,
-      // eyes, cheeks, and nose available):
-      final FaceLandmark leftEar = face.getLandmark(FaceLandmarkType.leftEar);
-      if (leftEar != null) {
-        final Offset leftEarPos = leftEar.position;
-      }
-
-      // If classification was enabled with FaceDetectorOptions:
-      if (face.smilingProbability != null) {
-        final double smileProb = face.smilingProbability;
-      }
-
-      // If face tracking was enabled with FaceDetectorOptions:
-      if (face.trackingId != null) {
-        final int id = face.trackingId;
-      }
-      setState(() {
-        _isChecked = !_isChecked;
-        _isFaceRecognition = leftEar == null && face.smilingProbability == null && face.trackingId == null
-            ? false
-            : true;
-      });
-    }
+    setState(() {
+      _isChecked = !_isChecked;
+      _numOfFaces = faces.length != null
+          ? faces.length
+          : 0;
+      _isFaceRecognition = faces.length > 0
+          ? true
+          : false;
+    });
+//    for (Face face in faces) {
+//      print('==============================face::${face.boundingBox}');
+//      final Rect boundingBox = face.boundingBox;
+//
+//      final double rotY = face.headEulerAngleY; // Head is rotated to the right rotY degrees
+//      final double rotZ = face.headEulerAngleZ; // Head is tilted sideways rotZ degrees
+//
+//      // If landmark detection was enabled with FaceDetectorOptions (mouth, ears,
+//      // eyes, cheeks, and nose available):
+//      final FaceLandmark leftEar = face.getLandmark(FaceLandmarkType.leftEar);
+//      if (leftEar != null) {
+//        final Offset leftEarPos = leftEar.position;
+//      }
+//
+//      // If classification was enabled with FaceDetectorOptions:
+//      if (face.smilingProbability != null) {
+//        final double smileProb = face.smilingProbability;
+//      }
+//
+//      // If face tracking was enabled with FaceDetectorOptions:
+//      if (face.trackingId != null) {
+//        final int id = face.trackingId;
+//      }
+//    }
     faceDetector.close();
   }
 }
