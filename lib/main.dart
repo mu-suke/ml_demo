@@ -57,6 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
               child: _isFaceRecognition
                   ? Text("$_numOfFaces人の顔が認識されました")
                   : Text("顔が認識できませんでした"),
+            ),
+            Visibility(
+              visible: _isChecked,
+              child: resetVerificationButton(),
             )
           ]
         ),
@@ -74,13 +78,25 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   Widget startVerificationButton() {
     return RaisedButton(
-      child: Text("顔認証", style: TextStyle(color: Colors.white),),
+      child: Text("顔認識", style: TextStyle(color: Colors.white),),
       color: Colors.blue,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
       onPressed: () {
         _startVerification();
+      },
+    );
+  }
+  Widget resetVerificationButton() {
+    return RaisedButton(
+      child: Text("リセット", style: TextStyle(color: Colors.white),),
+      color: Colors.blueAccent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      onPressed: () {
+        _resetVerification();
       },
     );
   }
@@ -134,5 +150,12 @@ class _MyHomePageState extends State<MyHomePage> {
 //      }
 //    }
     faceDetector.close();
+  }
+  void _resetVerification() {
+    setState(() {
+      _image = null;
+      _isChecked = false;
+      _isFaceRecognition = false;
+    });
   }
 }
