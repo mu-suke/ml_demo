@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File _image;
+  bool _loading = false;
   bool _isChecked = false;
   bool _isFaceRecognition = false;
   int _numOfFaces;
@@ -49,8 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? Text("画像を撮影してください")
                 : Image.file(_image),
             Visibility(
-              visible: _image != null && !_isChecked,
-              child: startVerificationButton(),
+              visible: _image != null,
+              child: verificationButton(),
             ),
             Visibility(
               visible: _isChecked,
@@ -58,10 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? Text("$_numOfFaces人の顔が認識されました")
                   : Text("顔が認識できませんでした"),
             ),
-            Visibility(
-              visible: _isChecked,
-              child: resetVerificationButton(),
-            )
           ]
         ),
       ),
@@ -76,29 +73,36 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-  Widget startVerificationButton() {
+  Widget verificationButton() {
     return RaisedButton(
-      child: Text("顔認識", style: TextStyle(color: Colors.white),),
+      child: verificationButtonChild(),
       color: Colors.blue,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
       onPressed: () {
-        _startVerification();
+        !_isChecked
+            ? _startVerification()
+            : _resetVerification();
       },
     );
   }
-  Widget resetVerificationButton() {
-    return RaisedButton(
-      child: Text("リセット", style: TextStyle(color: Colors.white),),
-      color: Colors.blueAccent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      onPressed: () {
-        _resetVerification();
-      },
-    );
+  Widget verificationButtonChild() {
+    if (!_isChecked && _loading) {
+      return Container(
+        height: 20,
+        width: 20,
+        margin: EdgeInsets.all(5),
+        child: CircularProgressIndicator(
+          strokeWidth: 2.0,
+          valueColor: AlwaysStoppedAnimation(Colors.white),
+        ),
+      );
+    }else if (!_isChecked) {
+      return Text("顔認識", style: TextStyle(color: Colors.white),);
+    }else {
+      return Text("リセット", style: TextStyle(color: Colors.white),);
+    }
   }
   void _onPickImageSelected() async {
     try {
@@ -113,11 +117,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
   void _startVerification() async {
+    setState(() {
+      _loading = true;
+    });
     final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(_image);
     final FaceDetector faceDetector = FirebaseVision.instance.faceDetector();
     final List<Face> faces = await faceDetector.processImage(visionImage);
     setState(() {
       _isChecked = !_isChecked;
+      _loading = !_loading;
       _numOfFaces = faces.length != null
           ? faces.length
           : 0;
