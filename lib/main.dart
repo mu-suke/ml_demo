@@ -125,8 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ? true
           : false;
     });
-    for (Face face in faces) {
-    }
     faceDetector.close();
   }
   void _resetVerification() {
