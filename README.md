@@ -1,17 +1,9 @@
 # mldemo
 
-A new Flutter application.
+Flutter x Firebaseで顔認識をさせてみた
 
-## Getting Started
+## できること
 
-This project is a starting point for a Flutter application.
+- 撮影した写真の中の顔を認識して認識した数を表示する
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# ml_demo
+## デモ動画
