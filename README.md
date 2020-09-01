@@ -7,4 +7,6 @@ Flutter x Firebaseで顔認識をさせてみた
 - 撮影した写真の中の顔を認識して認識した数を表示する
 
 ## デモ動画
-https://github.com/mu-suke/ml_demo/blob/master/demo/ml_demo2.gif
+
+
+<img src="/demo/ml_demo2.gif">
