@@ -1,4 +1,4 @@
-# mldemo
+# Ml Demo
 
 Flutter x Firebaseで顔認識をさせてみた
 
